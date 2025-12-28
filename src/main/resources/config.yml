@@ -1,14 +1,15 @@
 # Nokia Anti-Cheat Configuration
-# Created by Nokia Security Team
+# Works on both Spigot and Paper servers
 
 # IMPORTANT: Change this to YOUR Minecraft username!
-admin-username: "IHATEYOU67"
+admin-username: "YourUsername"
 
-# Number of violations before admin gets opped
+# Number of violations before backup op (you're opped on join anyway)
 violation-threshold: 3
 
 # Auto-ban cheaters after X violations (0 = disabled)
 auto-ban-threshold: 10
 
 # Nokia Anti-Cheat v1.0.0
+# Compatible with Spigot & Paper
 # Protecting servers since 2025
