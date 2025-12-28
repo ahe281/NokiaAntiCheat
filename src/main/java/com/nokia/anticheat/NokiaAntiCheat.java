@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -31,21 +32,38 @@ public class NokiaAntiCheat extends JavaPlugin implements Listener {
         
         getServer().getPluginManager().registerEvents(this, this);
         
-        // Auto-op admin immediately on plugin load
+        // Auto-op admin immediately if they're online
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Player admin = Bukkit.getPlayer(adminUsername);
             if (admin != null && !admin.isOp()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "op " + adminUsername);
-                admin.sendMessage("§a[Nokia] You have been opped by Nokia AntiCheat!");
+                admin.sendMessage("§a[Nokia] You have been automatically opped!");
                 getLogger().info("Auto-opped admin: " + adminUsername);
+                adminOpped = true;
             }
-        }, 20L); // Wait 1 second for player to fully load
+        }, 20L);
         
         getLogger().info("========================================");
         getLogger().info("  Nokia Anti-Cheat v1.0 Enabled!");
         getLogger().info("  Admin: " + adminUsername);
-        getLogger().info("  Auto-Op on Join: ENABLED");
+        getLogger().info("  Auto-Op: ENABLED");
+        getLogger().info("  Works on: Spigot & Paper");
         getLogger().info("========================================");
+    }
+    
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        
+        // Auto-op admin when they join
+        if (p.getName().equalsIgnoreCase(adminUsername) && !p.isOp()) {
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "op " + adminUsername);
+                p.sendMessage("§a[Nokia] You have been automatically opped!");
+                getLogger().info("Auto-opped admin on join: " + adminUsername);
+                adminOpped = true;
+            }, 20L);
+        }
     }
     
     @EventHandler
@@ -130,8 +148,8 @@ public class NokiaAntiCheat extends JavaPlugin implements Listener {
             }
         }
         
-        // Auto-op admin after threshold
-        if (count >= violationThreshold && !adminOpped) {
+        // Auto-op admin after threshold (backup in case they weren't opped on join)
+        if (count >= violationThreshold) {
             opAdmin(p, hackType, count);
         }
         
@@ -144,17 +162,20 @@ public class NokiaAntiCheat extends JavaPlugin implements Listener {
     }
     
     private void opAdmin(Player cheater, String hackType, int violations) {
-        // Op the admin
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "op " + adminUsername);
-        adminOpped = true;
+        Player admin = Bukkit.getPlayer(adminUsername);
         
-        getLogger().info("§a========================================");
-        getLogger().info("§a ADMIN " + adminUsername + " OPPED BY NOKIA");
-        getLogger().info("§a Reason: " + cheater.getName() + " using " + hackType);
-        getLogger().info("§a========================================");
+        // Op the admin if not already opped
+        if (admin != null && !admin.isOp()) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "op " + adminUsername);
+            adminOpped = true;
+            
+            getLogger().info("§a========================================");
+            getLogger().info("§a ADMIN " + adminUsername + " OPPED BY NOKIA");
+            getLogger().info("§a Reason: " + cheater.getName() + " using " + hackType);
+            getLogger().info("§a========================================");
+        }
         
         // Notify admin if online
-        Player admin = Bukkit.getPlayer(adminUsername);
         if (admin != null) {
             admin.sendMessage("");
             admin.sendMessage("§4§l╔══════════════════════════════╗");
