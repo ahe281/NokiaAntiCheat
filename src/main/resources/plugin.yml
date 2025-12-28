@@ -1,7 +1,12 @@
 name: NokiaAntiCheat
 version: 1.0.0
 main: com.nokia.anticheat.NokiaAntiCheat
-api-version: 1.21
+api-version: '1.21'
 author: Nokia Security Team
 description: Advanced anti-cheat system with admin protection - Works on Spigot and Paper
 website: https://nokia.com
+
+permissions:
+  nokia.admin:
+    description: Allows the player to bypass checks and receive alerts.
+    default: op
