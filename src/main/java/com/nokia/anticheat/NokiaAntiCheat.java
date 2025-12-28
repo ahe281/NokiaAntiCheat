@@ -101,23 +101,18 @@ public class NokiaAntiCheat extends JavaPlugin implements Listener {
         lastLocation.put(id, to);
     }
     
-    private boolean detectFlight(Player p, Location from, Location to) {
-        // Player not on ground, not gliding, not in water
-        if (!p.isOnGround() && !p.isGliding() && !p.isSwimming()) {
-            double yDiff = to.getY() - from.getY();
-            
-            // Moving upward without jumping (flight)
-            if (yDiff > 0.15 && yDiff < 0.5) {
-                return true;
-            }
-            
-            // Hovering in midair (flight)
-            if (Math.abs(yDiff) < 0.01) {
-                return true;
-            }
-        }
-        return false;
+    // Replace your detectFlight with a more stable block-check
+private boolean detectFlight(Player p, Location from, Location to) {
+    // Check if the player is in the air and moving upward without velocity
+    if (p.getLocation().getBlock().getRelative(0, -1, 0).getType().isAir() 
+        && !p.isFlying() 
+        && !p.isGliding()) {
+        
+        double yDiff = to.getY() - from.getY();
+        return (yDiff > 0.0 && yDiff < 0.5); // Detects hover/slow rise
     }
+    return false;
+}
     
     private boolean detectSpeed(Player p, Location from, Location to) {
         double distance = from.distance(to);
